@@ -23,10 +23,6 @@ public class AuthenticationException extends Exception{
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public String getMessage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMessage'");
-    }
 
     
 }
