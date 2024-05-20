@@ -3,13 +3,15 @@ package com.example.demo.controller;
 import com.example.demo.error.AuthenticationException;
 import com.example.demo.error.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
+//import jakarta.annotation.security.RolesAllowed;
+import com.example.demo.userservice.UserManager;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-import static javax.swing.text.html.parser.DTDConstants.ID;
+import static org.apache.coyote.http11.Constants.a;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api")
 public class UserController {
     //private static final ResponseEntity<Object> AuthenticationService = null;
 
@@ -38,20 +36,57 @@ public class UserController {
     private AuthenticationServiceImpl authenticationServiceImpl;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
+
+    @Autowired
+    private UserManager userManager;
+
+    public UserController(AuthenticationServiceImpl authenticationServiceImpl) {
+        this.authenticationServiceImpl = authenticationServiceImpl;
+    }
+
+
+    @GetMapping("/welcome")
+    public String welcome(){
+        return ("i have got a  programmer job");
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('USER')")
+    public String all(){
+        return "Got it";
+    }
+
+    @GetMapping("/allUser")
+    // @PreAuthorize("hasAuthority('ADMIN')")
+    public String allUser(){
+        return authenticationServiceImpl.all().toString();
+    }
+
+
+
 
     @PostMapping("/signup")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public User signUp(@RequestBody @Valid User userFromClient)
             throws DuplicateUserException {
         return authenticationServiceImpl.signUp(userFromClient);
     }
 
-    @GetMapping("/getAllUsers")
+    @GetMapping( "/getAllUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+   //@RolesAllowed("USER")
     public ResponseEntity<Object> getAllUsers() {
 
         return ResponseEntity.ok(authenticationServiceImpl.getAllUsers());
+        //return ResponseEntity.ok("It works");
     }
 
+    @PostMapping("/new")
+    public String addNewUser(@RequestBody User user) {
+        return userManager.addUser(user);
+    }
+    /*
     @PostMapping("/auth")
 
         public ResponseEntity<Object> login(@RequestBody User userFromClient)
@@ -59,15 +94,15 @@ public class UserController {
             return authenticationServiceImpl.login(userFromClient);
     }
 
+     */
+
     //------------------------------------------------------------------------
 
     @GetMapping("/getUserById/{id}")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public User getUserById(@PathVariable("id") String id) {
         Optional<User> gOpt = userRepository.findById(id);
-        if (gOpt.isPresent()) {
-            return gOpt.get();
-        }
-        return null;
+        return gOpt.orElse(null);
     }
 
 
@@ -86,6 +121,4 @@ public class UserController {
 
         return errors;
     }
-
-
 }

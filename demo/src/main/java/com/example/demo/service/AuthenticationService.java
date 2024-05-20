@@ -13,9 +13,11 @@ public interface AuthenticationService {
 
         public User signUp(User user) throws DuplicateUserException;
         public List<User> getAllUsers();
+        public List<User> all();
 
 
-        public ResponseEntity<Object> login(User user) throws UserNotFoundException, AuthenticationException;
+
+       // public ResponseEntity<Object> login(User user) throws UserNotFoundException, AuthenticationException;
 
         public ResponseEntity<Object> logout(User user) throws UserNotFoundException;
     

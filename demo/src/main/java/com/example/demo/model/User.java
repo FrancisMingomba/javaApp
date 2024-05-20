@@ -9,9 +9,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 
 @Data
@@ -21,8 +24,14 @@ import lombok.Data;
 @Document("user")
 public class User {
 
-    //@Valid
+  //  @Id
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
+   // private int id;
 
+  @NotNull(message = "Must not be null")
+  @NotBlank(message = "Must not be blank")
+  @NotEmpty(message = "Must not be Empty")
+  private String username;
     @NotNull(message = "Must not be null")
     @NotBlank(message = "Must not be blank")
     @NotEmpty(message = "Must not be Empty")
@@ -38,6 +47,8 @@ public class User {
     @NotEmpty(message = "Must not be empty")
     private String password;
 
+    private String role;
+
 
     public boolean isAuthentic(User user) {
         return email.equals(user.getEmail()) && password.equals(user.getPassword());
@@ -45,3 +56,4 @@ public class User {
 
 
 }
+

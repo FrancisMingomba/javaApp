@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.mockito.internal.matchers.text.ValuePrinter.print;
+
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService{
 
@@ -38,6 +40,13 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return data;
     }
 
+    @Override
+    public List<User> all() {
+        List<User> userIdb = this.userRepository.findAll();
+        return userIdb;
+    }
+
+
     private List<User> convertUsersToList(Iterable<User> users) {
         return StreamSupport.stream(users.spliterator(), false)
                 .collect(Collectors.toList());
@@ -48,6 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return this.userRepository.findUserByEmail(user.getEmail()) != null;
     }
 
+    /*
     @Override
     public ResponseEntity<Object> login(User user) throws UserNotFoundException, AuthenticationException {
         User userInDb = this.userRepository.findUserByEmail(user.getEmail().toLowerCase());
@@ -64,12 +74,25 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     }
 
+     */
+
     @Override
     public ResponseEntity<Object> logout(User user) throws UserNotFoundException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'logout'");
     }
 
+
+    /*
+    public List<User> getUserId(int id) {
+        return userList.stream()
+                .filter(user -> user.getUserId()==id)
+                .findAny()
+                .orElseThrow(()->new RuntimePermission("User" + "id" + "not found"));
+
+
+    }
+    */
 
     
 }
