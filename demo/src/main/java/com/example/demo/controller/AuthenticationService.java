@@ -11,7 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
+
+import static io.jsonwebtoken.Jwts.header;
 
 @Service
 @RequiredArgsConstructor
@@ -45,13 +50,10 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
-                .build();
+                .build()
+
+        ;
     }
-
-   // private boolean alReadyExist(User user) {
-       // return user.getEmail().equals(user.getEmail()) && user.getPassword().equals(user.getPassword());
-    //}
-
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -66,5 +68,42 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public AuthenticationResponse login(@RequestBody User user) throws Exception {
+        Optional<User> userInDb = userRepository.findUserByEmail(user.getEmail());
+
+        if (userInDb == null)
+            throw new Exception("AppUser does not exist");
+
+
+        if (!userInDb.isPresent())
+            throw new Exception("Wrong username or password");
+
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+
+    }
+    /*
+
+    public User signup(RegisterRequest user) throws Exception {
+        if (alreadyExists(user))
+            throw new Exception("User already exists");
+
+        // lower the case for email
+        user.setEmail(user.getEmail().toLowerCase());
+
+        // this.userRepository.create(user);
+        //this.userRepository.save(user);
+
+        return user;
+    }
+
+     */
+
+    private boolean alreadyExists(RegisterRequest user) {
+        return this.userRepository.findUserByEmail(user.getEmail()) != null;
     }
 }

@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/demo_controller")
+@RequestMapping("")
 public class DemoController {
 
-    @GetMapping
+    @GetMapping("/demo")
     public ResponseEntity<String> sayHello (){
         return ResponseEntity.ok("Hello from secure endpoint");
     }
