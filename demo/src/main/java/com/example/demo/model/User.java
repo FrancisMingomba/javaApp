@@ -31,7 +31,7 @@ public class User implements UserDetails {
   // @GeneratedValue
   // private int id;
 
-
+/*
     @NotNull(message = "Must not be null")
     @NotBlank(message = "Must not be blank")
     @NotEmpty(message = "Must not be Empty")
@@ -94,5 +94,7 @@ public class User implements UserDetails {
     public boolean alReadyExist(User user) {
         return user.email.equals(user.getEmail()) && password.equals(user.getPassword());
     }
+
+ */
 }
 
